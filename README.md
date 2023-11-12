@@ -39,4 +39,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - `npx create-next-app@latest`
 - `npm install prisma`
 - `npx prisma init`
-- 
+- create database and schema
+- `npx prisma db pull`
