@@ -42,3 +42,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - create database and schema
 - `npx prisma db pull`
 - `npx prisma generate`
+- `npm install @auth0/nextjs-auth0`
