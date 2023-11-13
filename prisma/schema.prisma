@@ -7,28 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model blog {
-  id                 String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name               String
-  creation_timestamp DateTime @db.Timestamp(6)
-  creator_id         String   @db.Uuid
-  creator            creator  @relation(fields: [creator_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  post               post[]
-}
-
 model creator {
   id    String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   email String  @unique @db.VarChar
   name  String? @db.VarChar
-  blog  blog[]
+  post  post[]
 }
 
 model post {
-  id                  Int      @id @default(autoincrement())
+  id                  Int       @id @default(autoincrement())
   title               String
   content             String
-  creation_timestamp  DateTime @db.Timestamp(6)
-  last_edit_timestamp DateTime @db.Timestamp(6)
-  blog_id             String   @db.Uuid
-  blog                blog     @relation(fields: [blog_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  public              Boolean
+  creation_timestamp  DateTime  @db.Timestamp(6)
+  last_edit_timestamp DateTime? @db.Timestamp(6)
+  creator_id          String    @db.Uuid
+  creator             creator   @relation(fields: [creator_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
