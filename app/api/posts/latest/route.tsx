@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(latestPosts);
   } catch (error: any) {
     return NextResponse.json(
-      { error: "Error while fetching posts." },
+      { error: "Error while fetching posts. " + error },
       { status: 404 }
     );
   }
