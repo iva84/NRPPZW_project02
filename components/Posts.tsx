@@ -17,9 +17,13 @@ export default function Posts({ fetchUrl }: PostsProps) {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    fetch(`${fetchUrl}?page=${pagination.page}&size=${pagination.size}`, {
-      cache: "no-store",
-    })
+    fetch(
+      process.env.NEXT_PUBLIC_API_URL +
+        `${fetchUrl}?page=${pagination.page}&size=${pagination.size}`,
+      {
+        cache: "no-store",
+      }
+    )
       .then((res) => {
         if (res.ok) {
           return res.json();

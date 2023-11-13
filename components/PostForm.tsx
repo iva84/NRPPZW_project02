@@ -12,7 +12,7 @@ export default function PostForm() {
   const handleSave: SubmitHandler<PostFormInput> = (formValues, event) => {
     event?.preventDefault();
 
-    fetch("/api/posts", {
+    fetch(process.env.NEXT_PUBLIC_API_URL + "/api/posts", {
       method: "POST",
       body: JSON.stringify(formValues),
     }).then((res) => {
