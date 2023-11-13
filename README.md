@@ -43,3 +43,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - `npx prisma db pull`
 - `npx prisma generate`
 - `npm install @auth0/nextjs-auth0`
+- `npm install react-hook-form`

@@ -1,0 +1,12 @@
+.post-container {
+    border: 1px solid black;;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    width: 100%;
+    cursor: pointer;
+}
+
+.visibility-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+}

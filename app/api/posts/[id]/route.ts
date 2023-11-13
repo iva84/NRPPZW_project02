@@ -1,12 +1,11 @@
-import {
-  getPostByIdAndCurrentUser,
-  getPostByIdAndPublic,
-} from "@/lib/repository";
-import { getSession } from "@auth0/nextjs-auth0/edge";
-import { NextResponse } from "next/server";
+import { getPostById } from "@/lib/repository";
+import { NextRequest, NextResponse } from "next/server";
 
 // post by id
-export async function GET(context: { params: { id: number } }) {
+export async function GET(
+  req: NextRequest,
+  context: { params: { id: number } }
+) {
   try {
     if (context.params.id === null) {
       return NextResponse.json(
@@ -17,14 +16,7 @@ export async function GET(context: { params: { id: number } }) {
       );
     }
 
-    const session = await getSession();
-    let post = null;
-
-    if (!session) {
-      post = await getPostByIdAndPublic(context.params.id);
-    } else {
-      post = await getPostByIdAndCurrentUser(session, context.params.id);
-    }
+    const post = await getPostById(context.params.id);
 
     return NextResponse.json(post);
   } catch (error: any) {

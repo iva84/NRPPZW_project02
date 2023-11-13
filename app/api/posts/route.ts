@@ -1,15 +1,14 @@
-import { db } from "@/lib/db";
 import {
   createPost,
   getCurrentUserOrCreate,
   getPostsByCurrentUser,
 } from "@/lib/repository";
 import { Post } from "@/types";
-import { getSession } from "@auth0/nextjs-auth0/edge";
+import { getSession } from "@auth0/nextjs-auth0";
 import { NextRequest, NextResponse } from "next/server";
 
 // all posts by current user
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
     if (!session) {
@@ -19,7 +18,15 @@ export async function GET() {
       );
     }
 
-    const posts = await getPostsByCurrentUser(session);
+    const searchParams = req.nextUrl.searchParams;
+    const size = Number(searchParams.get("size"));
+    const page = Number(searchParams.get("page"));
+
+    const posts = await getPostsByCurrentUser(session, {
+      page: page,
+      size: size,
+    });
+
     return NextResponse.json(posts);
   } catch (error: any) {
     return NextResponse.json(

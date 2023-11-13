@@ -1,6 +1,7 @@
 import { Session } from "@auth0/nextjs-auth0";
 import { db } from "./db";
-import { Pagination, Post } from "@/types";
+import { PaginationReq, PaginationRes, Post } from "@/types";
+import { getSession } from "@auth0/nextjs-auth0";
 
 /* ---------- FUNCTIONS THAT CAN ACCESS ONLY AUTHENTICATED USER ---------- */
 
@@ -23,7 +24,10 @@ export async function getCurrentUserOrCreate(session: Session) {
 }
 
 // get posts by current user
-export async function getPostsByCurrentUser(session: Session) {
+export async function getPostsByCurrentUser(
+  session: Session,
+  pagination: PaginationReq
+) {
   const user = await db.creator.findFirst({
     where: {
       email: session.user.email,
@@ -38,9 +42,26 @@ export async function getPostsByCurrentUser(session: Session) {
     where: {
       creator: user,
     },
+    skip: pagination.page * pagination.size,
+    take: pagination.size,
   });
 
-  return posts;
+  const count = await db.post.count({
+    where: {
+      creator: user,
+    },
+  });
+
+  const lastPage: boolean =
+    count >= pagination.page * pagination.size &&
+    count <= (pagination.page + 1) * pagination.size;
+
+  const response: PaginationRes = {
+    lastPage: lastPage,
+    data: posts,
+  };
+
+  return response;
 }
 
 // create post
@@ -68,6 +89,7 @@ export async function createPost(session: Session, postData: Post) {
   return post;
 }
 
+/*
 // get post by id
 export async function getPostByIdAndCurrentUser(
   session: Session,
@@ -83,7 +105,7 @@ export async function getPostByIdAndCurrentUser(
     throw new Error("User not found.");
   }
 
-  const posts = await db.post.findMany({
+  const posts = await db.post.findFirst({
     where: {
       id: postId,
       creator: user,
@@ -92,12 +114,13 @@ export async function getPostByIdAndCurrentUser(
 
   return posts;
 }
+*/
 
 /* ---------- PUBLIC FUNCTIONS ---------- */
 
 // latest 10 public posts
-export async function getLatestPublicPosts(pagination: Pagination) {
-  db.post.findMany({
+export async function getLatestPublicPosts(pagination: PaginationReq) {
+  const posts = await db.post.findMany({
     where: {
       public: true,
     },
@@ -107,11 +130,28 @@ export async function getLatestPublicPosts(pagination: Pagination) {
     skip: pagination.page * pagination.size,
     take: pagination.size,
   });
+  const count = await db.post.count({
+    where: {
+      public: true,
+    },
+  });
+
+  const lastPage: boolean =
+    count >= pagination.page * pagination.size &&
+    count <= (pagination.page + 1) * pagination.size;
+
+  const response: PaginationRes = {
+    lastPage: lastPage,
+    data: posts,
+  };
+
+  return response;
 }
 
+/*
 // get post by id
 export async function getPostByIdAndPublic(postId: number) {
-  const posts = await db.post.findMany({
+  const posts = await db.post.findFirst({
     where: {
       id: postId,
       public: true,
@@ -119,4 +159,50 @@ export async function getPostByIdAndPublic(postId: number) {
   });
 
   return posts;
+}
+*/
+
+/* ----------- COMMON ----------- */
+
+// get post by id
+export async function getPostById(postId: number) {
+  const session = await getSession();
+
+  if (!session) {
+    const post = await db.post.findFirst({
+      where: {
+        id: postId,
+        public: true,
+      },
+    });
+
+    return post;
+  } else {
+    const user = await db.creator.findFirst({
+      where: {
+        email: session.user.email,
+      },
+    });
+
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    const post = await db.post.findFirst({
+      where: {
+        OR: [
+          {
+            id: postId,
+            creator: user,
+          },
+          {
+            id: postId,
+            public: true,
+          },
+        ],
+      },
+    });
+
+    return post;
+  }
 }

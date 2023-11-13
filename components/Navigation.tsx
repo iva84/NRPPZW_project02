@@ -12,8 +12,8 @@ export default async function Navigation() {
       </a>
       {session ? (
         <div className={styles["nav-loggedin-container"]}>
-          <a className={styles["nav-btn"]} href="/blogs">
-            Your blogs
+          <a className={styles["nav-btn"]} href="/posts">
+            Your posts
           </a>
           <a className={styles["nav-btn"]} href="/api/auth/logout">
             Logout
