@@ -4,6 +4,7 @@ import "./globals.css";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 import Navigation from "@/components/Navigation";
 import VulnerabilityForm from "@/components/VulnerabilityForm";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +23,9 @@ export default function RootLayout({
       <UserProvider>
         <body className={inter.className}>
           <Navigation />
-          <VulnerabilityForm />
+          <Suspense>
+            <VulnerabilityForm />
+          </Suspense>
           {children}
         </body>
       </UserProvider>
