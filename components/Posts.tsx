@@ -18,8 +18,7 @@ export default function Posts({ fetchUrl }: PostsProps) {
 
   useEffect(() => {
     fetch(
-      process.env.NEXT_PUBLIC_API_URL +
-        `${fetchUrl}?page=${pagination.page}&size=${pagination.size}`,
+      `${process.env.NEXT_PUBLIC_API_URL}${fetchUrl}?page=${pagination.page}&size=${pagination.size}`,
       {
         cache: "no-store",
       }
