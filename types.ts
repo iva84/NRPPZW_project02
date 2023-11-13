@@ -21,3 +21,8 @@ export interface PostFormInput {
   content: string;
   public: boolean;
 }
+
+export interface VulnerabilityFormInput {
+  xssVul: boolean;
+  bacVul: boolean;
+}

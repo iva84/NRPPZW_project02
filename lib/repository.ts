@@ -1,6 +1,11 @@
 import { Session } from "@auth0/nextjs-auth0";
 import { db } from "./db";
-import { PaginationReq, PaginationRes, Post } from "@/types";
+import {
+  PaginationReq,
+  PaginationRes,
+  Post,
+  VulnerabilityFormInput,
+} from "@/types";
 import { getSession } from "@auth0/nextjs-auth0";
 
 /* ---------- FUNCTIONS THAT CAN ACCESS ONLY AUTHENTICATED USER ---------- */
@@ -168,7 +173,17 @@ export async function getPostByIdAndPublic(postId: number) {
 export async function getPostById(postId: number) {
   const session = await getSession();
 
-  if (!session) {
+  const vul = await getVulnerability();
+
+  if (vul?.bacvul) {
+    const post = await db.post.findFirst({
+      where: {
+        id: postId, // forget to add public only
+      },
+    });
+
+    return post;
+  } else if (!session) {
     const post = await db.post.findFirst({
       where: {
         id: postId,
@@ -205,4 +220,13 @@ export async function getPostById(postId: number) {
 
     return post;
   }
+}
+
+export async function getVulnerability() {
+  const vul = await db.vulnerability.findFirst({
+    where: {
+      id: 1,
+    },
+  });
+  return vul;
 }

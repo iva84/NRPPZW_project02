@@ -24,3 +24,9 @@ model post {
   creator_id          String    @db.Uuid
   creator             creator   @relation(fields: [creator_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
+
+model vulnerability {
+  id     Int      @id @default(autoincrement())
+  bacvul Boolean?
+  xssvul Boolean?
+}

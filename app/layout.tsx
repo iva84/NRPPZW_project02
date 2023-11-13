@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 import Navigation from "@/components/Navigation";
+import VulnerabilityForm from "@/components/VulnerabilityForm";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,7 @@ export default function RootLayout({
       <UserProvider>
         <body className={inter.className}>
           <Navigation />
+          <VulnerabilityForm />
           {children}
         </body>
       </UserProvider>
